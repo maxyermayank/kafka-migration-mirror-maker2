@@ -1,0 +1,157 @@
+version: "3.8"
+
+services:
+  mm2-kafka-connect:
+    image: confluentinc/cp-kafka-connect:7.3.3
+    command:
+      - bash
+      - -c
+      - |
+        cp /usr/lib/jvm/jre/lib/security/cacerts /tmp/kafka.client.truststore.jks && chmod 744 /tmp/kafka.client.truststore.jks
+        export CONNECT_REST_ADVERTISED_HOST_NAME=$${HOSTNAME}
+        exec /etc/confluent/docker/run
+    environment:
+      # Base Configuration
+      CONNECT_BOOTSTRAP_SERVERS: '${BOOTSTRAP_SERVERS}'
+      CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect/jars
+
+      # REST API
+      CONNECT_REST_ADVERTISED_HOST_NAME: localhost
+      CONNECT_REST_PORT: ${CONNECT_TARGET_PORT}
+
+      # Distributed Mode
+      CONNECT_GROUP_ID: ${CONNECT_GROUP_ID}
+      CONNECT_CONFIG_STORAGE_TOPIC: ${CONNECT_STORAGE_TOPIC_PREFIX}${CONNECT_CONFIG_STORAGE_TOPIC}
+      CONNECT_OFFSET_STORAGE_TOPIC: ${CONNECT_STORAGE_TOPIC_PREFIX}${CONNECT_OFFSET_STORAGE_TOPIC}
+      CONNECT_STATUS_STORAGE_TOPIC: ${CONNECT_STORAGE_TOPIC_PREFIX}${CONNECT_STATUS_STORAGE_TOPIC}
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: ${CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR}
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: ${CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR}
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: ${CONNECT_STATUS_STORAGE_REPLICATION_FACTOR}
+
+      # Default Message Options
+      CONNECT_KEY_CONVERTER: ${CONNECT_KEY_CONVERTER}
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER: ${CONNECT_VALUE_CONVERTER}
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://${SCHEMA_REGISTRY_HOSTNAME}:${SCHEMA_REGISTRY_TARGET_PORT}
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+
+      # Logging
+      CONNECT_LOG4J_ROOT_LOGLEVEL: ERROR
+      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
+    
+      
+      # Authentication and Authorization
+      CONNECT_SECURITY_PROTOCOL: ${SECURITY_PROTOCOL}
+      CONNECT_SASL_MECHANISM: ${SASL_MECHANISM}
+      CONNECT_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      CONNECT_SSL_TRUSTSTORE_LOCATION: "${SSL_TRUSTSTORE_LOCATION}"
+      CONNECT_SSL_TRUSTSTORE_PASSWORD: "changeit"
+
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: ${CONNECT_CONSUMER_SECURITY_PROTOCOL}
+      CONNECT_CONSUMER_SASL_MECHANISM: ${CONNECT_CONSUMER_SASL_MECHANISM}
+      CONNECT_CONSUMER_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      CONNECT_CONSUMER_MAX_PARTITION_FETCH_BYTES: "419431424"
+
+      # CONNECT_PRODUCER_SECURITY_PROTOCOL: ${CONNECT_PRODUCER_SECURITY_PROTOCOL}
+      # CONNECT_PRODUCER_SASL_MECHANISM: ${CONNECT_PRODUCER_SASL_MECHANISM}
+      CONNECT_PRODUCER_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: ${SECURITY_PROTOCOL}
+      CONNECT_PRODUCER_SASL_MECHANISM: ${SASL_MECHANISM}
+      CONNECT_PRODUCER_SSL_TRUSTSTORE_LOCATION: "${SSL_TRUSTSTORE_LOCATION}"
+      CONNECT_PRODUCER_SSL_TRUSTSTORE_PASSWORD: "changeit"
+      CONNECT_PRODUCER_SSL_TRUSTSTORE_TYPE: "JKS"
+      CONNECT_PRODUCER_MAX_REQUEST_SIZE: "419431424"
+    deploy:
+      replicas: ${CONNECT_DEPLOY_REPLICAS}
+      resources:
+        reservations:
+          memory: 2000M
+        limits:
+          memory: 4000M
+    # volumes:
+    #   - type: bind
+    #     source: /var/run/metadata/
+    #     target: /var/run/metadata/
+    #     read_only: true
+    ports:
+      - target: ${CONNECT_TARGET_PORT}
+        published: ${CONNECT_PUBLISHED_PORT}
+        protocol: tcp
+    networks:
+      - app
+      - ingress
+  mm2-rest-proxy:
+    image: confluentinc/cp-kafka-rest:7.3.3
+    command:
+      - bash
+      - -c
+      - |
+        cp /usr/lib/jvm/jre/lib/security/cacerts /tmp/kafka.client.truststore.jks && chmod 744 /tmp/kafka.client.truststore.jks
+        exec /etc/confluent/docker/run
+    ports:
+      - published: ${KAFKA_REST_PROXY_PUBLISHED_PORT}
+        target: ${KAFKA_REST_PROXY_TARGET_PORT}
+      - published: ${KAFKA_REST_PROXY_PUBLISHED_JMX_PORT}
+        target: ${KAFKA_REST_PROXY_TARGET_JMX_PORT}
+    environment:
+      KAFKA_REST_HOST_NAME: ${KAFKA_REST_HOST_NAME}
+      KAFKA_REST_BOOTSTRAP_SERVERS: '${BOOTSTRAP_SERVERS}'
+      KAFKA_REST_LISTENERS: http://0.0.0.0:${KAFKA_REST_PROXY_TARGET_PORT}
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://${SCHEMA_REGISTRY_HOSTNAME}:${SCHEMA_REGISTRY_TARGET_PORT}
+      KAFKA_REST_JMX_HOSTNAME: ${KAFKA_REST_JMX_HOSTNAME}
+      KAFKA_REST_JMX_PORT: ${KAFKA_REST_PROXY_JMX_PORT}
+      KAFKA_REST_SECURITY_PROTOCOL: ${SECURITY_PROTOCOL}
+      KAFKA_REST_SASL_MECHANISM: ${SASL_MECHANISM}
+      KAFKA_REST_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      KAFKA_REST_CLIENT_BOOTSTRAP_SERVERS: '${BOOTSTRAP_SERVERS}'
+      KAFKA_REST_CLIENT_SECURITY_PROTOCOL: ${SECURITY_PROTOCOL}
+      KAFKA_REST_CLIENT_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      KAFKA_REST_CLIENT_SASL_MECHANISM: ${SASL_MECHANISM}
+      KAFKA_REST_MESSAGE_MAX_BYTES: ${KAFKA_REST_MESSAGE_MAX_BYTES}
+      KAFKA_REST_REPLICA_FETCH_MAX_BYTES: ${KAFKA_REST_REPLICA_FETCH_MAX_BYTES}
+      KAFKA_REST_MAX_REQUEST_SIZE: ${KAFKA_REST_MAX_REQUEST_SIZE}
+      KAFKA_REST_CLIENT_SSL_TRUSTSTORE_LOCATION: ${SSL_TRUSTSTORE_LOCATION}
+      KAFKA_REST_SSL_TRUSTSTORE_PASSWORD: "changeit"
+    deploy:
+      replicas: ${REST_PROXY_DEPLOY_REPLICAS}
+      resources:
+        reservations:
+          memory: 1000M
+        limits:
+          memory: 2000M
+    networks:
+      - app
+      - ingress
+  mm2-schema-registry:
+    image: confluentinc/cp-schema-registry:7.3.3
+    command:
+      - bash
+      - -c
+      - |
+        cp /usr/lib/jvm/jre/lib/security/cacerts /tmp/kafka.client.truststore.jks && chmod 744 /tmp/kafka.client.truststore.jks
+        exec /etc/confluent/docker/run
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: ${SCHEMA_REGISTRY_HOSTNAME}
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:${SCHEMA_REGISTRY_TARGET_PORT}
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: '${BOOTSTRAP_SERVERS}'
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: ${SECURITY_PROTOCOL}
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: ${SASL_MECHANISM}
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: "${SASL_JAAS_CONFIG}"
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION: ${SSL_TRUSTSTORE_LOCATION}
+      SCHEMA_REGISTRY_SSL_TRUSTSTORE_PASSWORD: "changeit"
+    deploy:
+      replicas: ${SCHEMA_REGISTRY_DEPLOY_REPLICAS}
+    ports:
+      - target: ${SCHEMA_REGISTRY_TARGET_PORT}
+        published: ${SCHEMA_REGISTRY_PUBLISHED_PORT}
+        protocol: tcp
+    networks:
+      - app
+      - ingress
+    
+networks:
+  app:
+  ingress:
+    external:
+      name: ${INGRESS_NETWORK:-traefik}

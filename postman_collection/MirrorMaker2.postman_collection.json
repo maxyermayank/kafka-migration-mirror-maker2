@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "42760434-b309-413f-b8ca-651ba850c515",
+		"name": "MirrorMaker2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MirrorMakerReplication",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MirrorMakerReplication\",\n    \"consumer.group.id\": \"mm2-msc\",\n    \"connector.class\": \"org.apache.kafka.connect.mirror.MirrorSourceConnector\",\n    \"clusters\": \"\",\n    \"source.cluster.alias\": \"\",\n    \"target.cluster.alias\": \"\",\n    \"replication.policy.separator\": \"\",\n    \"sync.topic.configs.enabled\": \"true\",\n    \"topics\": \".*\",\n    \"topics.blacklist\": \"<COMMA_SEPARATED_TOPIC_NAMES>\",\n    \"groups\": \".*\",\n    \"groups.blacklist\": \"<COMMA_SEPARATED_CONSUMER_GROUP_NAMES>\",\n    \"value.converter\": \"org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"key.converter\": \"org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"refresh.topics.enabled\": \"true\",\n    \"sync.topic.acls.enabled\": \"true\",\n    \"refresh.groups.interval.seconds\": \"15\",\n    \"refresh.topics.interval.seconds\": \"15\",\n    \"tasks.max\": \"2\",\n    \"replication.factor\": \"2\",\n    \"offset-syncs.topic.replication.factor\": \"2\",\n    \"sync.topic.acls.interval.seconds\": \"20\",\n    \"sync.topic.configs.interval.seconds\": \"20\",\n    \"source.cluster.bootstrap.servers\": \"{{SOURCE_BROKER_SERVERS}}\",\n    \"source.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"source.cluster.security.protocol\": \"SASL_SSL\",\n    \"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{SOURCE_BROKER_PASSWORD}}\\\";\",\n    \"source.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.truststore.password\": \"changeit\",\n    \"source.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.keystore.password\": \"changeit\",\n    \"source.cluster.consumer.offset.flush.timeout.ms\": \"20000\",\n    \"source.cluster.consumer.max.partition.fetch.bytes\": \"419431424\",\n    \"target.cluster.bootstrap.servers\": \"{{TARGET_BROKER_SERVERS}}\",\n    \"target.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"target.cluster.security.protocol\": \"SASL_SSL\",\n    \"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{TARGET_PASSWORD}}\\\";\",\n    \"target.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.truststore.password\": \"changeit\",\n    \"target.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.keystore.password\": \"changeit\",\n    \"target.cluster.producer.offset.flush.timeout.ms\": \"20000\",\n    \"target.cluster.producer.offset.flush.interval.ms\": \"10000\",\n    \"target.cluster.producer.buffer.memory\": \"33554432\",\n    \"target.cluster.producer.max.request.size\": \"419431424\",\n    \"target.cluster.max.request.size\": \"419431424\",\n    \"producer.max.request.size\": \"419431424\",\n    \"max.request.size\": \"419431424\",\n    \"target.cluster.producer.segment.index.bytes\": \"419431424\",\n    \"target.cluster.producer.socket.request.max.bytes\": \"419431424\",\n    \"target.cluster.producer.max.message.bytes\": \"419431424\",\n    \"target.cluster.producer.message.max.bytes\": \"419431424\",\n    \"replica.fetch.max.bytes\": \"419431424\",\n    \"target.cluster.producer.compression.type\": \"snappy\",\n    \"target.cluster.producer.cleanup.policy\": \"compact\",\n    \"offset.flush.timeout.ms\": \"20000\",\n    \"offset.flush.interval.ms\": \"10000\"\n}"
+				},
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerReplication/config",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerReplication",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MirrorMakerCheckpoint",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MirrorMakerCheckpoint\",\n    \"connector.class\": \"org.apache.kafka.connect.mirror.MirrorCheckpointConnector\",\n    \"clusters\": \"\",\n    \"source.cluster.alias\": \"\",\n    \"target.cluster.alias\": \"\",\n    \"replication.factor\": \"2\",\n    \"tasks.max\": \"2\",\n    \"emit.checkpoints.interval.seconds\": \"10\",\n    \"value.converter\": \"org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"key.converter\": \" org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"replication.policy.separator\": \"\",\n    \"checkpoints.topic.replication.factor\": \"2\",\n    \"sync.group.offsets.enabled\": \"true\",\n    \"source.cluster.bootstrap.servers\": \"{{SOURCE_BROKER_SERVERS}}\",\n    \"source.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"source.cluster.security.protocol\": \"SASL_SSL\",\n    \"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{SOURCE_BROKER_PASSWORD}}\\\";\",\n    \"source.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.truststore.password\": \"changeit\",\n    \"source.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.keystore.password\": \"changeit\",\n    \"source.cluster.offset.flush.timeout.ms\": \"20000\",\n    \"source.cluster.consumer.max.partition.fetch.bytes\": \"419431424\",\n    \"target.cluster.bootstrap.servers\": \"{{TARGET_BROKER_SERVERS}}\",\n    \"target.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"target.cluster.security.protocol\": \"SASL_SSL\",\n    \"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{TARGET_PASSWORD}}\\\";\",\n    \"target.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.truststore.password\": \"changeit\",\n    \"target.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.keystore.password\": \"changeit\",\n    \"target.cluster.offset.flush.timeout.ms\": \"20000\",\n    \"target.cluster.producer.buffer.memory\": \"33554432\",\n    \"target.cluster.producer.max.request.size\": \"419431424\"\n}"
+				},
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerCheckpoint/config",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerCheckpoint",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MirrorMakerHeartbeat",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MirrorMakerHeartbeat\",\n    \"connector.class\": \"org.apache.kafka.connect.mirror.MirrorHeartbeatConnector\",\n    \"clusters\": \"\",\n    \"source.cluster.alias\": \"\",\n    \"target.cluster.alias\": \"\",\n    \"replication.policy.separator\": \"\",\n    \"tasks.max\": \"2\",\n    \"key.converter\": \" org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"value.converter\": \"org.apache.kafka.connect.converters.ByteArrayConverter\",\n    \"replication.factor\": \"2\",\n    \"heartbeats.topic.replication.factor\": \"2\",\n    \"emit.heartbeats.interval.seconds\": \"20\",\n    \"source.cluster.bootstrap.servers\": \"{{SOURCE_BROKER_SERVERS}}\",\n    \"source.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"source.cluster.security.protocol\": \"SASL_SSL\",\n    \"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{SOURCE_BROKER_PASSWORD}}\\\";\",\n    \"source.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.truststore.password\": \"changeit\",\n    \"source.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"source.cluster.ssl.keystore.password\": \"changeit\",\n    \"source.cluster.offset.flush.timeout.ms\": \"20000\",\n    \"source.cluster.consumer.max.partition.fetch.bytes\": \"419431424\",\n    \"target.cluster.bootstrap.servers\": \"{{TARGET_BROKER_SERVERS}}\",\n    \"target.cluster.sasl.mechanism\": \"SCRAM-SHA-512\",\n    \"target.cluster.security.protocol\": \"SASL_SSL\",\n    \"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\"{{USERNAME}}\\\" password=\\\"{{TARGET_PASSWORD}}\\\";\",\n    \"target.cluster.ssl.truststore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.truststore.password\": \"changeit\",\n    \"target.cluster.ssl.keystore.location\": \"/tmp/kafka.client.truststore.jks\",\n    \"target.cluster.ssl.keystore.password\": \"changeit\",\n    \"target.cluster.offset.flush.timeout.ms\": \"20000\",\n    \"target.cluster.producer.buffer.memory\": \"33554432\",\n    \"target.cluster.producer.max.request.size\": \"419431424\"\n}"
+				},
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerHeartbeat/config",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerHeartbeat",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MirrorMakerReplicationStatus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerReplication/status",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerReplication",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteMirrorMakerReplication",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerReplication",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerReplication"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MirrorMakerCheckpointStatus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerCheckpoint/status",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerCheckpoint",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteMirrorMakerCheckpoint",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerCheckpoint",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerCheckpoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MirrorMakerHeartbeatStatus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerHeartbeat/status",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerHeartbeat",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteMirrorMakerHeartbeat",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerHeartbeat",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerHeartbeat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerReplication/config",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{KAFKA_CONECT_BASE_URL}}/connectors/MirrorMakerReplication/config",
+					"protocol": "http",
+					"host": [
+						"{{KAFKA_CONECT_BASE_URL}}"
+					],
+					"path": [
+						"connectors",
+						"MirrorMakerReplication",
+						"config"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

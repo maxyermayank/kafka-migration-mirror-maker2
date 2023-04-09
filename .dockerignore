@@ -1,0 +1,13 @@
+# Repository
+.git
+.gitignore
+.gitlab-ci.yml
+README.md
+
+# Docker
+.dockerignore
+.env*
+compose-files/*
+Dockerfile
+parameters/*
+
